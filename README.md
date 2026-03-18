@@ -31,14 +31,6 @@ Component	Description
 - Log Forwarding	Splunk Universal Forwarder
 - Virtualization	Oracle VM VirtualBox
 
-## Architecture Flow:
-
-KING-CLIENT  ─┐
-              ├──> Splunk Enterprise Server (Ubuntu)
-DC-KING      ─┘
-
-Both Windows systems forward security telemetry to the Splunk server for centralized analysis.
-
 ## Implementation Workflow
 1. Installed Splunk Enterprise on Ubuntu
 - Enabled Splunk Web interface
@@ -87,5 +79,4 @@ Key outcomes:
 - End-to-end enterprise SIEM deployment experience
 - SOC-style dashboards for authentication monitoring
 - Ability to detect suspicious login behavior and analyze targeted accounts
-
-Practical experience with Blue Team workflows in a lab environment
+- Practical experience with Blue Team workflows in a lab environment
