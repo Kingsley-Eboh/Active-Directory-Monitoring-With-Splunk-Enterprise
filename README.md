@@ -1,82 +1,150 @@
+![Platform](https://img.shields.io/badge/Platform-Windows_Server_2022-blue)
+![SIEM](https://img.shields.io/badge/SIEM-Splunk_Enterprise-orange)
+![Domain](https://img.shields.io/badge/Domain-Active_Directory-lightgrey)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
+
+# Active Directory Monitoring With Splunk Enterprise
+Centralised SIEM Integration & Authentication Monitoring | Home Lab Project
+
 ## Project Overview
 
-This project builds upon a previous lab in which I designed and deployed my own Windows Active Directory (AD) environment. After establishing the domain infrastructure, the next objective was to implement centralized security monitoring using Splunk Enterprise.
-To achieve this, I integrated my Domain Controller (DC-KING) and client workstation (KING-CLIENT) with a Splunk server running on Ubuntu. Using Splunk Universal Forwarder, both systems were configured to forward authentication activity and security telemetry to the SIEM platform.
-The result is a centralized monitoring environment capable of capturing and analyzing authentication activity across the domain infrastructure. This setup simulates the type of security monitoring architecture used by enterprise Security Operations Centers (SOC) to detect suspicious login behavior and support security investigations.
+Having previously designed and deployed an enterprise-grade Active Directory environment — including domain configuration, OU structure, security groups, user accounts, and audit policies — this project focuses on the next phase: integrating that infrastructure with Splunk Enterprise to enable centralised security monitoring.
 
-## This project demonstrates my ability to:
+Splunk Universal Forwarder was installed and configured on the Domain Controller (DC-KING) and client workstation (KING-CLIENT), forwarding Windows Security event logs to a Splunk server running on Ubuntu. This integration transforms the existing AD environment into a monitored domain infrastructure with real-time visibility into authentication activity across all connected endpoints.
 
-- Build and deploy an Active Directory environment
-- Integrate enterprise SIEM infrastructure
-- Configure centralized log collection
-- Enable authentication monitoring across domain systems
+The outcome is a fully operational SIEM pipeline built on infrastructure I designed and deployed end-to-end — from domain setup through to centralised log ingestion, detection querying, and SOC-style dashboard monitoring. This reflects the type of identity monitoring architecture used by enterprise security teams to detect threats, investigate incidents, and maintain continuous visibility over domain activity.
 
-## Objective
+## Objectives
 
-The objective of this project was to extend my existing Active Directory lab by integrating it with Splunk Enterprise to support centralized security monitoring.
-
-Specifically:
-
-- Configured Splunk Universal Forwarder on both the Domain Controller and client workstation
-- Forwarded authentication events and security logs to the Splunk server
-- Centralized logs enable monitoring of login behavior, providing visibility for threat detection and cybersecurity operations
-
-This demonstrates how enterprise organizations use SIEM platforms to monitor identity infrastructure and detect suspicious authentication activity.
+- Deploy and configure Splunk Enterprise on Ubuntu as a centralised SIEM platform
+- Install and configure Splunk Universal Forwarder on the Domain Controller and client workstation
+- Forward Windows Security event logs from both endpoints to the Splunk server
+- Validate end-to-end log ingestion and confirm active host connectivity
+- Build Splunk queries and dashboard panels to surface authentication threats across the domain
 
 ## Lab Architecture
-Component	Description
-- SIEM Platform	Ubuntu 22.04 running Splunk Enterprise
-- Domain Controller	Windows Server 2022 – DC-KING
-- Client Workstation	Windows endpoint – KING-CLIENT
-- Log Forwarding	Splunk Universal Forwarder
-- Virtualization	Oracle VM VirtualBox
+
+| Component | Detail |
+|---|---|
+| SIEM Platform | Ubuntu 22.04 running Splunk Enterprise |
+| Domain Controller | Windows Server 2022 (DC-KING) |
+| Client Workstation | Domain-joined Windows endpoint (KING-CLIENT) |
+| Log Forwarding | Splunk Universal Forwarder |
+| Virtualisation | Oracle VM VirtualBox |
+
+## Prerequisites
+
+| Requirement | Detail |
+|---|---|
+| Virtualisation | VirtualBox 7.0 or later |
+| DC OS | Windows Server 2022 |
+| Client OS | Windows 10 or Windows 11 |
+| SIEM OS | Ubuntu 22.04 |
+| SIEM Platform | Splunk Enterprise |
+| Domain | Configured Active Directory domain (king.local) |
+| Network | Isolated VirtualBox internal lab network |
+
+## Tools & Libraries
+
+| Tool | Purpose |
+|---|---|
+| Splunk Enterprise | SIEM platform for centralised log ingestion, querying and visualisation |
+| Splunk Universal Forwarder | Log forwarding agent deployed on DC-KING and KING-CLIENT |
+| Ubuntu 22.04 | Operating system hosting the Splunk server |
+| Windows Server 2022 | Domain Controller operating system |
+| Active Directory Domain Services | Domain identity infrastructure and event source |
+| Oracle VM VirtualBox | Virtualisation platform for hosting all VMs |
 
 ## Implementation Workflow
-1. Installed Splunk Enterprise on Ubuntu
-- Enabled Splunk Web interface
-- Configured receiving port for log ingestion
-- Created dedicated index for Windows security logs
 
-This setup allows the Splunk server to receive telemetry from external systems.
+**1. Splunk Enterprise Deployment on Ubuntu**
+- Installed Splunk Enterprise on Ubuntu 22.04 and enabled the Splunk Web interface
+- Configured a receiving port to accept incoming log data from Windows endpoints
+- Created a dedicated index for Windows Security event logs to isolate domain telemetry
 
-2. Endpoint Integration with Splunk
+**2. Splunk Universal Forwarder Configuration**
+- Installed Splunk Universal Forwarder on DC-KING and KING-CLIENT
+- Configured each forwarder to collect and transmit Windows Security event logs to the Splunk server
+- Validated successful connectivity by confirming both hosts appeared as active sources in Splunk
 
-- Installed Splunk Universal Forwarder on: DC-KING (Domain Controller) and KING-CLIENT (Windows endpoint)
-- Forwarders transmit Windows security telemetry to the Splunk server
-- Integration validated by checking active hosts in Splunk
+**3. Detection Queries & Dashboard Development**
+- Developed Splunk queries targeting key Windows Security Event IDs related to authentication and privilege activity
+- Built dashboard panels to visualise logon trends, failure patterns, and account lockout events across the domain
 
-3. Monitoring & Dashboard Panels
+## Event ID Reference
 
-After integration, Windows systems forwarded authentication activity to Splunk. Using Splunk’s search and reporting capabilities, authentication events could be queried and visualized.
+| Event ID | Category | Description | Detection Use Case |
+|---|---|---|---|
+| 4624 | Authentication | Successful Logon | Baseline logon activity and anomalous access patterns |
+| 4625 | Authentication | Failed Logon | Brute-force attempts and password spray detection |
+| 4672 | Privilege | Special Privileges Assigned | Privileged account usage and escalation monitoring |
+| 4740 | Account | Account Locked Out | Brute-force threshold breach and lockout detection |
 
-Example Queries:
+## Detection Queries
 
-- Failed Logins (4625): index=wineventlog EventCode=4625 | timechart span=5m count
-- Successful Logins (4624): index=wineventlog EventCode=4624 | timechart span=5m count
-- Top Targeted Users/ Account lockout (4625 & 4740): index=wineventlog EventCode IN (4625,4740) | head 10
-- Privileged Logins (4672): index=wineventlog EventCode=4672 | head 10
+| Event ID | Query | Purpose |
+|---|---|---|
+| 4625 | `index=wineventlog EventCode=4625 \| timechart span=5m count` | Visualise failed logon attempts over time to identify brute-force patterns |
+| 4624 | `index=wineventlog EventCode=4624 \| timechart span=5m count` | Baseline successful logon activity and detect anomalous spikes |
+| 4625 & 4740 | `index=wineventlog EventCode IN (4625,4740) \| head 10` | Correlate failed logons with account lockouts to confirm brute-force threshold breaches |
+| 4672 | `index=wineventlog EventCode=4672 \| head 10` | Surface privileged logon activity for escalation and lateral movement detection |
 
-## Skills Demonstrated
+## Key Findings
 
-- Active Directory Administration
-- Domain Controller deployment
-- Domain environment configuration
-- Windows endpoint integration
-- SIEM Deployment
-- Splunk Enterprise installation and configuration
-- Log ingestion pipeline setup
-- Index management and event monitoring
-- Multi-host log aggregation
-- Authentication activity monitoring
-- Privileged account tracking
+- Successfully deployed a full SIEM pipeline from Windows domain infrastructure to Splunk Enterprise on Ubuntu
+- Both DC-KING and KING-CLIENT confirmed as active log sources in Splunk following Universal Forwarder configuration
+- Failed logon events (Event ID 4625) were ingested and visualised as a time-series, enabling pattern-based brute-force detection
+- Successful logon events (Event ID 4624) established an authentication baseline against which anomalous activity can be identified
+- Account lockout events (Event ID 4740) were captured and correlated with failed logon spikes, confirming end-to-end detection of brute-force threshold breaches
+- Privileged logon activity (Event ID 4672) was surfaced via Splunk query, demonstrating visibility into elevated access events across the domain
+- Dashboard panels validated the ability to monitor authentication threats in a SOC-style environment
 
-## Project Significance
+## Analyses
 
-This project demonstrates a complete identity infrastructure monitoring workflow, from deploying a Windows AD lab to integrating it with a SIEM platform for centralized monitoring.
+| Analysis | Description |
+|---|---|
+| 1. DC & Client Connection | Validation of active host connections to the Splunk server |
+| 2. Failed Logins | Time-series visualisation of Event ID 4625 failed logon activity |
+| 3. Successful Logins | Time-series visualisation of Event ID 4624 successful logon activity |
+| 4. Successful Login Detail | Event ID 4624 logon event detail and field inspection |
+| 5. Privilege Use | Event ID 4672 privileged logon activity across the domain |
+| 6. Account Lockout | Event ID 4740 account lockout detection and correlation |
 
-Key outcomes:
+## Project Structure
+```
+Active-Directory-Monitoring-With-Splunk-Enterprise/
+├── DC & Client Connection.png               # Active host validation in Splunk
+├── Line Graph (Failed Logins).png           # Failed logon trend (Event ID 4625)
+├── Line Graph (Successful Login).png        # Successful logon trend (Event ID 4624)
+├── Successful Login (Event 4624).png        # Successful logon event detail
+├── Privilege use (Event 4672).png           # Privileged logon activity (Event ID 4672)
+├── Account Lockout (Event 4740).png         # Account lockout event (Event ID 4740)
+└── README.md                                # Project documentation
+```
 
-- End-to-end enterprise SIEM deployment experience
-- SOC-style dashboards for authentication monitoring
-- Ability to detect suspicious login behavior and analyze targeted accounts
-- Practical experience with Blue Team workflows in a lab environment
+## Evidence
+
+### DC & Client Connection
+[![DC & Client Connection](DC & Client Connection.png)](DC & Client Connection.png)
+
+### Failed Logins — Event ID 4625
+[![Line Graph (Failed Logins)](Line Graph (Failed Logins).png)](Line Graph (Failed Logins).png)
+
+### Successful Logins — Event ID 4624
+[![Line Graph (Successful Login)](Line Graph (Successful Login).png)](Line Graph (Successful Login).png)
+
+### Successful Login Detail — Event ID 4624
+[![Successful Login (Event 4624)](Successful Login (Event 4624).png)](Successful Login (Event 4624).png)
+
+### Privilege Use — Event ID 4672
+[![Privilege use (Event 4672)](Privilege use (Event 4672).png)](Privilege use (Event 4672).png)
+
+### Account Lockout — Event ID 4740
+[![Account Lockout (Event 4740)](Account Lockout (Event 4740).png)](Account Lockout (Event 4740).png)
+
+## Author
+
+Kingsley Eboh
+[GitHub](https://github.com/Kingsley-Eboh)
+
+This project is intended for portfolio and educational purposes. All activity was simulated in an isolated lab environment with no connection to production systems.
