@@ -8,11 +8,11 @@ Centralised SIEM Integration & Authentication Monitoring | Home Lab Project
 
 ## Project Overview
 
-Having previously designed and deployed an enterprise-grade Active Directory environment — including domain configuration, OU structure, security groups, user accounts, and audit policies — this project focuses on the next phase: integrating that infrastructure with Splunk Enterprise to enable centralised security monitoring.
+Having previously designed and deployed an enterprise-grade Active Directory environment covering domain configuration, OU structure, security groups, user accounts, and audit policiesTh, this project focuses on the next phase: integrating that infrastructure with Splunk Enterprise to enable centralised security monitoring.
 
 Splunk Universal Forwarder was installed and configured on the Domain Controller (DC-KING) and client workstation (KING-CLIENT), forwarding Windows Security event logs to a Splunk server running on Ubuntu. This integration transforms the existing AD environment into a monitored domain infrastructure with real-time visibility into authentication activity across all connected endpoints.
 
-The outcome is a fully operational SIEM pipeline built on infrastructure I designed and deployed end-to-end — from domain setup through to centralised log ingestion, detection querying, and SOC-style dashboard monitoring. This reflects the type of identity monitoring architecture used by enterprise security teams to detect threats, investigate incidents, and maintain continuous visibility over domain activity.
+The outcome is a fully operational SIEM pipeline built on infrastructure I designed and deployed end-to-end from domain setup through to centralised log ingestion, detection querying, and SOC-style dashboard monitoring. This reflects the type of identity monitoring architecture used by enterprise security teams to detect threats, investigate incidents, and maintain continuous visibility over domain activity.
 
 ## Objectives
 
@@ -125,22 +125,22 @@ Active-Directory-Monitoring-With-Splunk-Enterprise/
 ## Evidence
 
 ### DC & Client Connection
-[![DC & Client Connection](DC & Client Connection.png)](DC & Client Connection.png)
+[![dc-client-connection](dc-client-connection.png)](dc-client-connection.png)
 
 ### Failed Logins — Event ID 4625
-[![Line Graph (Failed Logins)](Line Graph (Failed Logins).png)](Line Graph (Failed Logins).png)
+[![line-graph-failed-logins](line-graph-failed-logins.png)](line-graph-failed-logins.png)
 
 ### Successful Logins — Event ID 4624
-[![Line Graph (Successful Login)](Line Graph (Successful Login).png)](Line Graph (Successful Login).png)
+[![line-graph-successful-login](line-graph-successful-login.png)](line-graph-successful-login.png)
 
 ### Successful Login Detail — Event ID 4624
-[![Successful Login (Event 4624)](Successful Login (Event 4624).png)](Successful Login (Event 4624).png)
+[![successful-login-event-4624](successful-login-event-4624.png)](successful-login-event-4624.png)
 
 ### Privilege Use — Event ID 4672
-[![Privilege use (Event 4672)](Privilege use (Event 4672).png)](Privilege use (Event 4672).png)
+[![privilege-use-event-4672](privilege-use-event-4672.png)](privilege-use-event-4672.png)
 
 ### Account Lockout — Event ID 4740
-[![Account Lockout (Event 4740)](Account Lockout (Event 4740).png)](Account Lockout (Event 4740).png)
+[![account-lockout-event-4740](account-lockout-event-4740.png)](account-lockout-event-4740.png)
 
 ## Author
 
